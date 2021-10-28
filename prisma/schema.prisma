@@ -6,6 +6,92 @@ datasource db {
 }
 
 generator client {
-   provider          = "prisma-client-js"
-   previewFeatures   = ["referentialIntegrity"]
- }
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum BindingFormat {
+  IN_PLANO
+  IN_FOLIO
+  IN_QUARTO
+  IN_6
+  IN_OCTAVO
+  IN_12
+  IN_16
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  firstName      String?   @db.VarChar(255)
+  lastName      String?   @db.VarChar(255)
+  role          Role      @default(USER)
+  books         Book[]
+  authors       Author[]
+  publishers    Publisher[]
+  genres        Genre[]
+  registeredAt  DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Book {
+  id              Int           @id @default(autoincrement())
+  owner           User          @relation(fields: [ownerId], references: [id])
+  ownerId         Int
+  publisher       Publisher     @relation(fields: [publisherId], references: [id])
+  publisherId     Int
+  authors         Author[]
+  genre           Genre[]
+  bindingFormat   BindingFormat
+  title           String        @db.VarChar(255)
+  isbn            String?       @db.VarChar(13)
+  publicationYear String?       @db.VarChar(4)
+  description     String?       @db.LongText()
+  observations    String?       @db.LongText()
+  volume          Int?
+  hasBeenRead     Boolean       @default(false)
+  isEbook         Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model Author {
+  id        Int       @id @default(autoincrement())
+  owner     User      @relation(fields: [ownerId], references: [id])
+  ownerId   Int
+  books     Book[]
+  name      String    @db.VarChar(255)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([ownerId, name])
+}
+
+model Publisher {
+  id        Int       @id @default(autoincrement())
+  owner     User      @relation(fields: [ownerId], references: [id])
+  ownerId   Int
+  books     Book[]
+  name      String    @db.VarChar(255)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([ownerId, name])
+}
+
+model Genre {
+  id        Int       @id @default(autoincrement())
+  owner     User      @relation(fields: [ownerId], references: [id])
+  ownerId   Int
+  books     Book[]
+  name      String    @db.VarChar(255)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([ownerId, name])
+}
