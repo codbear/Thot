@@ -1,12 +1,14 @@
 {
   "name": "thot",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
+    "migrations:create": "prisma migrate dev --create-only",
+    "migrations:migrate": "prisma migrate dev",
+    "next:dev": "next dev",
+    "next:build": "next build",
+    "next:start": "next start",
+    "next:lint": "next lint",
     "prettier:check": "prettier --check '**/*.{ts,tsx}'",
     "prettier:write": "prettier --write '**/*.{ts,tsx}'"
   },
